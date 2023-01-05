@@ -7,19 +7,13 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.reaper.netexplorer.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:name="com.reaper.netexplorer.presentation.dashboard.DashboardFragment"
+        android:label="@string/dashboard"
         tools:layout="@layout/fragment_home" />
-
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.reaper.netexplorer.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/routerScanFragment"
+        android:name="com.reaper.netexplorer.presentation.routerscan.RouterScanFragment"
+        android:label="@string/router_scan"
+        tools:layout="@layout/fragment_router_scan" />
 
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.reaper.netexplorer.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
 </navigation>

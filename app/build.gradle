@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -17,8 +19,29 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            def keystoreProperties = new Properties()
+            def keystorePropsFile = file("keystore/keystore_config")
+
+            if (keystorePropsFile.exists()) {
+                file("keystore/keystore_config").withInputStream { keystoreProperties.load(it) }
+                storeFile file("$keystoreProperties.storeFile")
+                storePassword "$keystoreProperties.storePassword"
+                keyAlias "$keystoreProperties.keyAlias"
+                keyPassword "$keystoreProperties.keyPassword"
+            } else {
+                storeFile file("keystore/my_app_keystore")
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('RELEASE_SIGN_KEY_ALIAS')
+                keyPassword System.getenv('RELEASE_SIGN_KEY_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -35,6 +58,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -45,7 +72,14 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    implementation project(path: ':domain')
+    implementation project(path: ':data')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
 }

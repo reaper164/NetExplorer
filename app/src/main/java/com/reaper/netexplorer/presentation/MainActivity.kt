@@ -1,4 +1,4 @@
-package com.reaper.netexplorer
+package com.reaper.netexplorer.presentation
 
 import android.os.Bundle
 import android.view.Menu
@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.reaper.netexplorer.R
 import com.reaper.netexplorer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

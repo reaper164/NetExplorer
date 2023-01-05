@@ -8,4 +8,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/keystore
+/app/keystore/keystore_config

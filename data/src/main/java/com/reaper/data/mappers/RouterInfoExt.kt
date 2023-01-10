@@ -1,4 +1,4 @@
-package com.reaper.mappers
+package com.reaper.data.mappers
 
 import com.reaper.data.local.entity.RouterEntity
 import com.reaper.domain.model.RouterInfo

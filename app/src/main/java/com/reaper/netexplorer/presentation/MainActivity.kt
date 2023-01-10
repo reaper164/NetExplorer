@@ -1,7 +1,11 @@
 package com.reaper.netexplorer.presentation
 
+import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -11,6 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.permissionx.guolindev.PermissionX
 import com.reaper.netexplorer.R
 import com.reaper.netexplorer.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,21 +41,53 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.routerScanFragment
+                R.id.dashboardFragment, R.id.routerScanFragment, R.id.settingsFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+        requestPermissions()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun requestPermissions() {
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            )
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "Core fundamental are based on these permissions",
+                    "OK",
+                    "Cancel"
+                )
+            }
+            .onForwardToSettings { scope, deniedList ->
+                scope.showForwardToSettingsDialog(
+                    deniedList,
+                    "You need to allow necessary permissions in Settings manually",
+                    "OK",
+                    "Cancel"
+                )
+            }
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                } else {
+
+
+                    Toast.makeText(
+                        this,
+                        "These permissions are denied: $deniedList",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 }

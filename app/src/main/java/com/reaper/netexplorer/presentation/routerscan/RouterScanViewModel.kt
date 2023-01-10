@@ -1,42 +1,72 @@
 package com.reaper.netexplorer.presentation.routerscan
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.reaper.domain.repository.RouterScanRepository
-import com.reaper.netexplorer.model.ui.RsUiState
+import com.reaper.domain.Resource
+import com.reaper.domain.model.RouterscanParams
+import com.reaper.domain.usecase.GetRoutersUseCase
+import com.reaper.netexplorer.mappers.toRouter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class RouterScanViewModel @Inject constructor(
-    private val repository: RouterScanRepository
+    private val getRoutersUseCase: GetRoutersUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RsUiState())
-    val uiState: StateFlow<RsUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(RouterscanUiState())
+    val uiState: StateFlow<RouterscanUiState> = _uiState
 
     private var fetchJob: Job? = null
 
-    fun discoveryRouters(category: String) {
+    fun discoveryRouters(routerscanParams: RouterscanParams) {
         fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
+        fetchJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(200L)
             try {
-                /*_uiState.update {
-                    it.copy(isLoading = )
-                }*/
-
-                val newsItems = repository.scanRouters()
+                getRoutersUseCase(routerscanParams).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    routerList = result.data?.map { it.toRouter() } ?: emptyList(),
+                                    isLoading = false,
+                                    progress = 100
+                                )
+                            }
+                        }
+                        is Resource.Error -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    isLoading = false,
+                                    message = result.message,
+                                    progress = null
+                                )
+                            }
+                        }
+                        is Resource.Loading -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    routerList = result.data?.map { it.toRouter() } ?: emptyList(),
+                                    isLoading = true
+                                )
+                            }
+                        }
+                        is Resource.Progress -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    isLoading = true,
+                                    progress = result.progress
+                                )
+                            }
+                        }
+                    }
+                }.launchIn(this)
 
             } catch (ioe: IOException) {
-                // Handle the error and notify the UI when appropriate.
                 _uiState.update {
                     it.copy(message = ioe.message)
                 }

@@ -6,6 +6,7 @@ import com.reaper.data.local.entity.RouterEntity
 
 @Database(
     entities = [RouterEntity::class],
+    exportSchema = false,
     version = 1
 )
 abstract class NetDatabase : RoomDatabase() {

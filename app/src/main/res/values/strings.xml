@@ -10,4 +10,25 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="router_scan">Router Scan</string>
     <string name="dashboard">Dashboard</string>
+    <string name="initializing">Initialization…</string>
+    <string name="ip_ranges">IP ranges</string>
+    <string name="ports">Ports</string>
+    <string name="start">Start</string>
+    <string name="router_progress">Progress: %1$d %%</string>
+    <string name="progress_percent">%1$d%%</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings">Settings</string>
 </resources>
